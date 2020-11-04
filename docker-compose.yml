@@ -1,0 +1,21 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: github-api-demo
+    container_name: github-api-demo
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    networks:
+      - backend
+    ports:
+      - "8080:3000"
+    environment:
+      - APP_PORT=3000
+
+
+networks:
+  backend:
