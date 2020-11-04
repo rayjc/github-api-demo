@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const ExpressError = require("./helpers/express-error");
-const UsersRouter = require("./routes/users");
+const usersRouter = require("./routes/users");
+const mostFreqRouter = require("./routes/most-frequent");
 
 const app = express();
 
@@ -9,7 +10,8 @@ const app = express();
 app.use(morgan("tiny"));
 
 // routes
-app.use(UsersRouter);
+app.use(usersRouter);
+app.use(mostFreqRouter);
 
 /** 404 handler */
 app.use(function(req, res, next) {
