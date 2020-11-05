@@ -2,10 +2,22 @@ const request = require("supertest");
 const nock = require("nock");
 const app = require("../../app");
 const { GITHUB_API_URL, GITHUB_API_URL_RES, START_DATE, END_DATE } = require("../../config");
+const redisClient = require("../../redis");
+const { promisify } = require("util");
 
 // force axios to be called in node env for jest testing
 const axios = require("axios");
 axios.defaults.adapter = require('axios/lib/adapters/http');
+
+const flushRedis = promisify(redisClient.flushdb).bind(redisClient);
+
+beforeEach(async () => {
+  await flushRedis();
+});
+
+afterAll(() => {
+  redisClient.quit();
+});
 
 
 it('responds with 200 and objects of name, commits if successful', async () => {

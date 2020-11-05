@@ -2,10 +2,22 @@ const request = require("supertest");
 const nock = require("nock");
 const app = require("../../app");
 const { GITHUB_API_URL, GITHUB_API_URL_RES, START_DATE, END_DATE } = require("../../config");
+const redisClient = require("../../redis");
+const { promisify } = require("util");
 
 // force axios to be called in node env for jest testing
 const axios = require("axios");
 axios.defaults.adapter = require('axios/lib/adapters/http');
+
+const flushRedis = promisify(redisClient.flushdb).bind(redisClient);
+
+beforeEach(async () => {
+  await flushRedis();
+});
+
+afterAll(() => {
+  redisClient.quit();
+});
 
 describe('test successful response', () => {
   it('responds with 200 and array of users if Github responds with 200 and only one page', async () => {
