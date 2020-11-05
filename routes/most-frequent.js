@@ -1,5 +1,9 @@
 const express = require("express");
 const fetchAllCommitPages = require("../helpers/commit-api-helper");
+const redisClient = require("../redis");
+const checkCache = require("../middlewares/check-cache");
+const { REDIS_EXP } = require("../config");
+const CACHE_KEY = "most-frequent";
 
 const router = express.Router();
 
@@ -13,7 +17,7 @@ const router = express.Router();
  *    }
  * }
  */
-router.get('/most-frequent', async (req, res, next) => {
+router.get('/most-frequent', checkCache(CACHE_KEY), async (req, res, next) => {
   try {
     const pages = await fetchAllCommitPages();
 
@@ -43,6 +47,9 @@ router.get('/most-frequent', async (req, res, next) => {
         commits: count
       };
     });
+
+    // cache data with redis
+    redisClient.setex(CACHE_KEY, REDIS_EXP, JSON.stringify(result));
 
     return res.json(result);
 

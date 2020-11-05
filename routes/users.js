@@ -1,5 +1,9 @@
 const express = require("express");
 const fetchAllCommitPages = require("../helpers/commit-api-helper");
+const redisClient = require("../redis");
+const checkCache = require("../middlewares/check-cache");
+const { REDIS_EXP } = require("../config");
+const CACHE_KEY = "users";
 
 const router = express.Router();
 
@@ -10,7 +14,7 @@ const router = express.Router();
  *    users: string[]
  * }
  */
-router.get('/users', async (req, res, next) => {
+router.get('/users', checkCache(CACHE_KEY), async (req, res, next) => {
   try {
     const pages = await fetchAllCommitPages();
 
@@ -24,7 +28,11 @@ router.get('/users', async (req, res, next) => {
       }
     }
 
-    return res.json({ users: Array.from(users) });
+    const data = { users: Array.from(users) };
+    // cache data with redis
+    redisClient.setex(CACHE_KEY, REDIS_EXP, JSON.stringify(data));
+
+    return res.json(data);
 
   } catch (error) {
     return next(error);
