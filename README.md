@@ -1,6 +1,7 @@
 # Github API Demo
 
-### This is a demo app for calling [Github commits API](https://docs.github.com/en/free-pro-team@latest/rest). Currently, this backend app supports to RESTful routes at _/users_ and _/most-frequent_.
+### Overview
+This is a demo app for calling [Github commits API](https://docs.github.com/en/free-pro-team@latest/rest). Currently, this backend app supports two RESTful routes at _/users_ and _/most-frequent_.
 
 - /users: retrieves all the users who have commits to a specified repository between particular time intervals
 - /most-frequent: retrieves top 5 users who have the most number of commits to a specified repository between particular time intervals
